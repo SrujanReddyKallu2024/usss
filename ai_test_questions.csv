@@ -1,0 +1,11 @@
+ai_feature,sample_question,tables_needed
+NL2SQL,Show available apartments in Dallas under 1800,properties
+NL2SQL,Which tenants have overdue payments?,payments + tenants
+NL2SQL,Show leases expiring in the next 60 days,leases
+NL2SQL,What is total paid revenue this month?,payments
+Recommendation,Recommend 2 bedroom properties in Austin under 2000,properties
+RAG,What is the late payment policy?,knowledge_base_documents
+RAG,What is the lease renewal process?,knowledge_base_documents
+Analytics,Summarize sales pipeline by lead status,leads
+Risk,Which tenants may be payment risk?,payments + tenants
+Forecasting,Forecast next month revenue using historical payments,payments
