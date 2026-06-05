@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Local Postgres data directory (runtime state, not source)
+.pgdata/
+
+# Secrets / local env
+.env
+.env.local
+*.env.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
