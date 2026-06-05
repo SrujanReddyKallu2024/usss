@@ -3,7 +3,7 @@ import csv
 import os
 import time
 
-from agent import graph
+from app.agents import graph
 
 CSV_PATH = os.path.join(
     os.path.dirname(__file__), "..", "data", "csv", "ai_test_questions.csv"

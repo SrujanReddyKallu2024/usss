@@ -1,27 +1,4 @@
-# Local embeddings with fastembed. One model instance, reused everywhere.
-from fastembed import TextEmbedding
+# Compatibility wrapper pointing to services/embeddings.py.
+from app.services.embeddings import get_model, embed_text, embed_many
 
-from config import settings
-
-_model = None
-
-
-def get_model():
-    """Load the embedding model once and reuse it."""
-    global _model
-    if _model is None:
-        _model = TextEmbedding(model_name=settings.EMBED_MODEL)
-    return _model
-
-
-def embed_text(text):
-    """Embed a single string and return a list of floats (384 dims)."""
-    model = get_model()
-    vectors = list(model.embed([text]))
-    return vectors[0].tolist()
-
-
-def embed_many(texts):
-    """Embed a list of strings, returning a list of float lists."""
-    model = get_model()
-    return [v.tolist() for v in model.embed(texts)]
+__all__ = ["get_model", "embed_text", "embed_many"]

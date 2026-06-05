@@ -3,8 +3,8 @@ from sqlalchemy import bindparam, text
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.types import Float
 
-from agent.embeddings import embed_text
-from db import app_engine
+from app.services.embeddings import embed_text
+from app.core.db import app_engine
 
 
 def run():
