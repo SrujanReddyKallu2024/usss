@@ -1,0 +1,9 @@
+document_id,title,category,content
+1,Late Payment Policy,Finance,"Rent is due on the first day of each month. A grace period of five days is allowed. After the grace period, a late fee may be applied based on lease terms."
+2,Lease Renewal Policy,Lease,"Tenants should be contacted 60 days before lease expiry. Renewal offers can be generated based on payment history, occupancy demand, and current market rent."
+3,Move-in Checklist,Tenant,"Before move-in, tenants must complete identity verification, deposit payment, lease signature, and utility setup confirmation."
+4,Property Booking Process,Sales,"A lead can book a property after site visit, document verification, deposit payment, and digital agreement confirmation."
+5,Maintenance SLA,Property,Critical maintenance requests should be assigned immediately. High priority issues should be resolved within 48 hours whenever possible.
+6,Refund Policy,Finance,"Refund eligibility depends on cancellation timing, booking terms, and whether the lease agreement has been signed."
+7,Digital Signature Workflow,Lease,Lease agreements can be sent through a digital signature workflow. The lease status should be updated after all required parties sign.
+8,Tenant Communication Policy,CRM,"All tenant and lead communications should be logged in CRM activities, including calls, emails, SMS, WhatsApp, and site visits."

@@ -1,0 +1,33 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+
+import { ThemeProvider } from "@/components/theme-provider";
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Real Estate Assistant",
+  description: "AI chat for tenants, payments, policies, and recommendations.",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        {/* Dark mode is the default; users can toggle to light. */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}

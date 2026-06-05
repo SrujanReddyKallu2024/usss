@@ -1,0 +1,38 @@
+# Spins up the database and backend. Frontend runs separately (npm run dev) during development.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: chatbot_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: real_estate
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./data/csv:/csv:ro                       # CSV files, read-only inside the container
+      - ./data/init:/docker-entrypoint-initdb.d  # runs once on first startup, in file-name order
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d real_estate"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    container_name: chatbot_backend
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/real_estate
+      DATABASE_URL_READONLY: postgresql+psycopg://chatbot_ro:readonly@db:5432/real_estate
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app   # live code reload during development
+
+volumes:
+  db_data:

@@ -1,0 +1,12 @@
+"use client";
+
+import * as React from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+
+// Thin wrapper around next-themes so we can use it in the App Router.
+export function ThemeProvider({
+  children,
+  ...props
+}: React.ComponentProps<typeof NextThemesProvider>) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+}
