@@ -1,4 +1,3 @@
-# Local embeddings with fastembed. One model instance, reused everywhere.
 from fastembed import TextEmbedding
 
 from app.core.config import settings

@@ -1,4 +1,3 @@
-// Shared types matching the backend SSE contract.
 
 export type Intent = "nl2sql" | "rag" | "recommend" | "smalltalk";
 
@@ -7,7 +6,6 @@ export type Source = {
   category: string;
 };
 
-// The "meta" event: arrives first, describes how the bot answered.
 export type MetaEvent = {
   type: "meta";
   intent: Intent;
@@ -35,12 +33,10 @@ export type ErrorEvent = {
 
 export type StreamEvent = MetaEvent | TokenEvent | DoneEvent | ErrorEvent;
 
-// A single message rendered in the chat.
 export type ChatMessage = {
   id: string;
   role: "user" | "assistant";
   text: string;
-  // assistant-only fields, filled from the meta event
   intent?: Intent;
   sql?: string | null;
   sources?: Source[];
@@ -48,7 +44,6 @@ export type ChatMessage = {
   columns?: string[];
   rows?: unknown[][];
   latencyMs?: number | null;
-  // streaming/state flags
   streaming?: boolean;
   error?: string | null;
 };

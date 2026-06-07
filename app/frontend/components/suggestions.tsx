@@ -2,7 +2,6 @@
 
 import { Database, FileText, Home, CalendarClock, Sparkles } from "lucide-react";
 
-// Starter prompts shown on the empty state. Clicking one sends it.
 const STARTERS = [
   {
     icon: Database,
@@ -37,7 +36,6 @@ export function Suggestions({
 }) {
   return (
     <div className="mx-auto flex max-w-2xl flex-col items-center gap-8 py-16 text-center">
-      {/* Hero icon */}
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--intent-recommend))] text-white shadow-lg animate-fade-in-up">
         <Sparkles className="h-8 w-8" />
       </div>
@@ -49,7 +47,6 @@ export function Suggestions({
         </p>
       </div>
 
-      {/* Suggestion cards */}
       <div className="grid w-full gap-3 sm:grid-cols-2">
         {STARTERS.map((item, i) => {
           const Icon = item.icon;

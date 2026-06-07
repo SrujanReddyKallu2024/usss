@@ -1,4 +1,3 @@
-# Pragmatic integration tests. Skips cleanly if the DB/LLM aren't reachable.
 import csv
 import os
 
@@ -19,7 +18,6 @@ def _reachable():
         return False
 
 
-# Skip the whole module gracefully when the environment isn't up.
 pytestmark = pytest.mark.skipif(
     not _reachable(), reason="DB/LLM not reachable; skipping live tests."
 )
@@ -34,9 +32,8 @@ def _load_questions():
 
 
 def test_health_logic_imports():
-    # Basic import-level sanity: main and graph load.
-    import main  # noqa: F401
-    from app.agents import graph  # noqa: F401
+    import main
+    from app.agents import graph
     assert hasattr(graph, "answer")
 
 

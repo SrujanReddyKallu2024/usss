@@ -10,7 +10,6 @@ import {
   TableFooter, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 
-// Badge
 const badgeVariants = cva(
   "relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border border-transparent font-medium outline-none transition-shadow disabled:pointer-events-none disabled:opacity-64",
   {
@@ -29,7 +28,6 @@ function Badge({ className, variant, size, render, ...props }: BadgeProps): Reac
   return useRender({ defaultTagName: "span", props: mergeProps<"span">({ className: cn(badgeVariants({ className, size, variant })), "data-slot": "badge" }, props), render });
 }
 
-// Frame
 function Frame({ className, ...props }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div

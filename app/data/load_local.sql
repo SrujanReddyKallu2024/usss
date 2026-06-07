@@ -1,5 +1,3 @@
--- Load CSVs into a LOCAL (non-Docker) Postgres using client-side \copy.
--- Run with: psql -d real_estate -f load_local.sql
 \copy properties FROM 'D:/c/usssssssss/app/data/csv/properties.csv' CSV HEADER
 \copy tenants FROM 'D:/c/usssssssss/app/data/csv/tenants.csv' CSV HEADER
 \copy leases FROM 'D:/c/usssssssss/app/data/csv/leases.csv' CSV HEADER

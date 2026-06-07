@@ -1,4 +1,3 @@
-# FastAPI app exposing the chatbot over HTTP (SSE streaming + a blocking endpoint).
 import json
 import decimal
 import datetime
@@ -12,7 +11,6 @@ from app.agents import graph
 
 app = FastAPI(title="Real Estate AI Chatbot")
 
-# Allow the frontend dev server to call us.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],

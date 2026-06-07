@@ -14,8 +14,6 @@ import { SqlBlock } from "@/components/sql-block";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/lib/types";
 
-// The "under the hood" panel: reveals the SQL the bot ran and/or the
-// policy sources it cited. Only renders when there is something to show.
 export function DetailsPanel({ message }: { message: ChatMessage }) {
   const [open, setOpen] = React.useState(false);
 
@@ -37,7 +35,6 @@ export function DetailsPanel({ message }: { message: ChatMessage }) {
       </CollapsibleTrigger>
 
       <CollapsibleContent className="mt-3 space-y-4 animate-fade-in-up rounded-xl border border-border/50 bg-muted/30 backdrop-blur-sm p-4">
-        {/* Data table first — most useful thing to see */}
         {hasSql && message.columns?.length && message.rows?.length ? (
           <DataTable
             columns={message.columns}

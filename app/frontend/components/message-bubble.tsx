@@ -9,7 +9,6 @@ import { IntentBadge } from "@/components/intent-badge";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/lib/types";
 
-// Animated bouncing dots for the "thinking" state
 function ThinkingDots() {
   return (
     <span className="inline-flex items-center gap-0.5 py-1">
@@ -20,7 +19,6 @@ function ThinkingDots() {
   );
 }
 
-// A single chat message. User messages sit on the right, AI on the left.
 export function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
 
@@ -35,7 +33,6 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
     );
   }
 
-  // Assistant message.
   const showCaret = message.streaming && !message.error;
   const showThinking = message.streaming && !message.text && !message.error;
   const hasRows = Boolean(message.columns?.length && message.rows?.length);
@@ -50,7 +47,6 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
           </div>
         )}
 
-        {/* Text answer bubble */}
         <div
           className={cn(
             "rounded-2xl rounded-bl-sm border bg-card/90 backdrop-blur-sm px-4 py-2.5 text-sm shadow-sm transition-all",
@@ -89,7 +85,6 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
           )}
         </div>
 
-        {/* Data table — shown INLINE, directly visible, no click needed */}
         {!message.error && hasRows && !message.streaming && (
           <div className="animate-fade-in-up rounded-2xl border bg-card/90 backdrop-blur-sm px-4 py-3 shadow-sm">
             <DataTable
@@ -100,7 +95,6 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
           </div>
         )}
 
-        {/* SQL + sources — tucked away behind "View SQL" for power users */}
         {!message.error && <DetailsPanel message={message} />}
 
         {typeof message.latencyMs === "number" && (

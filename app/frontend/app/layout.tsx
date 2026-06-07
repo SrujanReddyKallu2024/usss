@@ -19,7 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* Dark mode is the default; users can toggle to light. */}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

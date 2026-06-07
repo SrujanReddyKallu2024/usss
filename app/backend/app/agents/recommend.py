@@ -1,4 +1,3 @@
-# Recommend properties: extract criteria, generate filtered SQL, rank, explain.
 from app.agents.llm import chat, chat_json
 from app.core.db import run_readonly_sql
 from app.services.schema_introspect import get_allowed_tables, get_schema_string
@@ -52,7 +51,6 @@ def _rank_by_budget(rows, max_budget):
         if rent is None:
             return float("inf")
         rent = float(rent)
-        # Within budget: prefer closest to budget. Over budget: push to the back.
         if rent <= max_budget:
             return max_budget - rent
         return float("inf") - 1 + rent

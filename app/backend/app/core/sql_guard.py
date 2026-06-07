@@ -1,4 +1,3 @@
-# Validate and clean LLM-generated SQL before it ever runs.
 import sqlglot
 from sqlglot import expressions as exp
 
@@ -20,7 +19,6 @@ def clean_sql(sql, allowed_tables):
     if not sql or not sql.strip():
         raise SqlGuardError("Empty SQL.")
 
-    # Parse with the postgres dialect. Multiple statements -> reject.
     try:
         statements = sqlglot.parse(sql, read="postgres")
     except Exception as e:
@@ -32,11 +30,9 @@ def clean_sql(sql, allowed_tables):
 
     tree = statements[0]
 
-    # The top node must be a SELECT (a plain SELECT or a wrapping query).
     if not isinstance(tree, (exp.Select, exp.Subquery, exp.Union)):
         raise SqlGuardError("Only SELECT statements are allowed.")
 
-    # Reject any write/DDL nodes anywhere in the tree.
     forbidden = (
         exp.Insert, exp.Update, exp.Delete, exp.Drop, exp.Create,
         exp.Alter, exp.TruncateTable, exp.Command, exp.Merge,
@@ -45,14 +41,12 @@ def clean_sql(sql, allowed_tables):
         if isinstance(node, forbidden):
             raise SqlGuardError("Only read-only SELECT queries are allowed.")
 
-    # Every referenced table must be in the allowlist.
     allowed_lower = {t.lower() for t in allowed_tables}
     for table in tree.find_all(exp.Table):
         name = table.name
         if name and name.lower() not in allowed_lower:
             raise SqlGuardError(f"Table '{name}' is not allowed.")
 
-    # Enforce a LIMIT. Cap existing limits, inject one when missing.
     limit_node = tree.args.get("limit") if isinstance(tree, exp.Select) else None
     if isinstance(tree, exp.Select):
         if limit_node is None:
@@ -65,7 +59,6 @@ def clean_sql(sql, allowed_tables):
             except (ValueError, AttributeError):
                 tree.limit(MAX_LIMIT, copy=False)
     else:
-        # For UNION/Subquery wrap so we still bound the row count.
         tree = exp.select("*").from_(tree.subquery("guarded")).limit(MAX_LIMIT)
 
     return tree.sql(dialect="postgres")

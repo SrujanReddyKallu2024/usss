@@ -3,7 +3,6 @@ import { Database, FileText, Home, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Intent } from "@/lib/types";
 
-// Map a backend intent to a friendly label + icon + color for the badge.
 const INTENT_META: Record<
   Intent,
   { label: string; icon: typeof Database; className: string }

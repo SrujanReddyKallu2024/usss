@@ -1,4 +1,3 @@
-# Generate SQL from the live schema, run it read-only, then explain the rows.
 from app.agents.llm import chat, chat_json
 from app.core.db import run_readonly_sql
 from app.services.schema_introspect import get_allowed_tables, get_schema_string
@@ -56,7 +55,6 @@ def generate_and_run(question):
                 "tokens": total_tokens,
             }
         except (SqlGuardError, Exception) as e:
-            # Feed the error back to the model and try again.
             error = str(e)
 
     raise RuntimeError(f"Could not produce working SQL: {error}")
@@ -72,7 +70,6 @@ EXPLAIN_SYSTEM = (
 def _explain_messages(question, columns, rows):
     """Build the prompt for turning rows into a plain-English answer."""
     total = len(rows)
-    # Show only a sample to keep the prompt small, but tell the model the real total.
     preview = rows[:30]
     body = {"columns": columns, "sample_rows": preview}
     return [

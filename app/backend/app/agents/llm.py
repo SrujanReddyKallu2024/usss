@@ -1,4 +1,3 @@
-# Thin wrapper around the OpenAI SDK, pointed at whatever router the env configures.
 import json
 import time
 
@@ -6,10 +5,8 @@ from openai import OpenAI
 
 from app.core.config import settings
 
-# One shared client for the whole app.
 client = OpenAI(base_url=settings.LLM_BASE_URL, api_key=settings.LLM_API_KEY)
 
-# Retry settings to ride out rate limits and brief network hiccups.
 MAX_TRIES = 4
 BACKOFF_SECONDS = [2, 4, 8]
 
@@ -22,7 +19,6 @@ def _create(**kwargs):
             return client.chat.completions.create(**kwargs)
         except Exception as e:
             last_error = e
-            # Retry on rate limits / transient server errors; give up otherwise.
             text = str(e).lower()
             transient = any(s in text for s in
                             ["429", "rate", "timeout", "timed out", "503", "502", "overloaded", "connection"])
@@ -76,7 +72,6 @@ def chat_stream(messages, temperature=0.3):
 def _parse_json(text):
     """Best-effort JSON parse that tolerates code fences or extra prose."""
     text = text.strip()
-    # Strip ```json ... ``` fences if present.
     if text.startswith("```"):
         text = text.strip("`")
         if text.lower().startswith("json"):
@@ -85,7 +80,6 @@ def _parse_json(text):
     try:
         return json.loads(text)
     except Exception:
-        # Fall back to the first {...} block in the text.
         start = text.find("{")
         end = text.rfind("}")
         if start != -1 and end != -1 and end > start:

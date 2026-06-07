@@ -1,8 +1,4 @@
--- Database schema for the Real Estate chatbot.
--- Runs automatically the first time the db container starts.
 
--- Embeddings are stored as a plain float array and compared in Python (numpy),
--- so no database extension is required. Works on any PostgreSQL.
 
 DROP TABLE IF EXISTS ai_usage_logs CASCADE;
 DROP TABLE IF EXISTS maintenance_requests CASCADE;
@@ -101,16 +97,14 @@ CREATE TABLE maintenance_requests (
     estimated_cost NUMERIC(10,2)
 );
 
--- Policy documents for the RAG feature. The embedding is filled in later by the ingest script.
 CREATE TABLE knowledge_base_documents (
     document_id INT PRIMARY KEY,
     title VARCHAR(200),
     category VARCHAR(80),
     content TEXT,
-    embedding double precision[]   -- 384-dim vector, compared in Python
+    embedding double precision[]   
 );
 
--- One row per AI answer, so we can see what the bot did and how long it took.
 CREATE TABLE ai_usage_logs (
     id SERIAL PRIMARY KEY,
     session_id VARCHAR(80),
@@ -135,7 +129,6 @@ CREATE INDEX idx_leads_status_source ON leads(status, source);
 CREATE INDEX idx_crm_lead_date ON crm_activities(lead_id, activity_date);
 CREATE INDEX idx_maintenance_property_status ON maintenance_requests(property_id, status);
 
--- Read-only user. The chatbot connects as this user so generated SQL can never change data.
 DROP ROLE IF EXISTS chatbot_ro;
 CREATE ROLE chatbot_ro WITH LOGIN PASSWORD 'readonly';
 GRANT CONNECT ON DATABASE real_estate TO chatbot_ro;

@@ -6,12 +6,10 @@ import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 
-// Small button that flips between dark and light themes.
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
-  // Avoid a hydration mismatch: only show the real icon after mount.
   React.useEffect(() => setMounted(true), []);
 
   const isDark = theme !== "light";

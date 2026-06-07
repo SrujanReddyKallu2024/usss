@@ -1,19 +1,15 @@
-# Introspect the live database so the LLM always sees the real schema and values.
 from sqlalchemy import text
 
 from app.core.db import app_engine
 
-# Cache the built schema string and the table allowlist in memory.
 _schema_cache = None
 _allowed_tables = None
 
-# How many distinct values a text column may have before we still list them.
 DISTINCT_LIMIT = 25
 
 
 def _load_tables(conn):
     """Return {table_name: [(column, type), ...]} for the public schema (excluding system/logs tables)."""
-    # Exclude ai_usage_logs for security (prevents the chatbot from querying history logs).
     rows = conn.execute(text(
         """
         SELECT table_name, column_name, data_type
@@ -54,7 +50,6 @@ def _load_foreign_keys(conn):
 
 def _load_distinct_values(conn, table, column):
     """Return distinct values of a text column if there are few of them, else None."""
-    # Count distinct values first; only list when the column is low cardinality.
     count = conn.execute(text(
         f'SELECT COUNT(DISTINCT "{column}") FROM "{table}"'
     )).scalar()
@@ -83,7 +78,6 @@ def build_schema_string():
             col_parts = []
             for column_name, data_type in columns:
                 part = f"{column_name} {data_type}"
-                # For low-cardinality text columns, show the real values.
                 if _is_text_type(data_type):
                     distinct = _load_distinct_values(conn, table_name, column_name)
                     if distinct:

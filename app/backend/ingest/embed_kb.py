@@ -1,4 +1,3 @@
-# Embed all knowledge base documents and store the vectors. Run: python -m ingest.embed_kb
 from sqlalchemy import bindparam, text
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.types import Float
@@ -17,7 +16,6 @@ def run():
     total = len(rows)
     print(f"Embedding {total} knowledge base documents...")
 
-    # The embedding column is a float array, so we bind a plain Python list.
     update = text(
         "UPDATE knowledge_base_documents SET embedding = :vec WHERE document_id = :id"
     ).bindparams(bindparam("vec", type_=ARRAY(Float)))

@@ -26,12 +26,10 @@ type Props = {
 
 const PAGE_SIZE = 5;
 
-// Format a cell value: detect currency-like numbers and render them nicely.
 function formatCell(value: unknown): string {
   if (value == null) return "";
   const s = String(value);
 
-  // If it's a number with decimals and looks like currency (>= 100), format it.
   const n = Number(s);
   if (!isNaN(n) && s.includes(".") && Math.abs(n) >= 100) {
     return `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -39,7 +37,6 @@ function formatCell(value: unknown): string {
   return s;
 }
 
-// Frame wrapper for premium borders and floating styles
 function Frame({ className, ...props }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
@@ -64,12 +61,10 @@ export function DataTable({ columns, rows, rowCount }: Props) {
   const endIndex = Math.min(startIndex + PAGE_SIZE, rows.length);
   const visibleRows = rows.slice(startIndex, endIndex);
 
-  // Automatically reset to page 1 if data changes
   React.useEffect(() => {
     setCurrentPage(1);
   }, [rows]);
 
-  // Page range buttons calculation
   const maxButtons = 5;
   let startPage = Math.max(1, currentPage - 2);
   let endPage = Math.min(totalPages, startPage + maxButtons - 1);
@@ -81,7 +76,6 @@ export function DataTable({ columns, rows, rowCount }: Props) {
     pageNumbers.push(i);
   }
 
-  // Calculate sum of budgets if the column is budget or monthly_rent
   const budgetColIndex = columns.findIndex(col => 
     col.toLowerCase().includes("budget") || 
     col.toLowerCase().includes("rent") || 
@@ -104,7 +98,6 @@ export function DataTable({ columns, rows, rowCount }: Props) {
 
   return (
     <div className="space-y-3 mt-3">
-      {/* Table header meta info */}
       <div className="flex items-center justify-between px-1">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Query Results
@@ -117,7 +110,6 @@ export function DataTable({ columns, rows, rowCount }: Props) {
         </span>
       </div>
 
-      {/* Styled Frame container */}
       <Frame className="w-full">
         <Table>
           <TableHeader>
@@ -211,14 +203,12 @@ export function DataTable({ columns, rows, rowCount }: Props) {
         </Table>
       </Frame>
 
-      {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-1 py-1">
           <div className="text-[11px] text-muted-foreground">
             Page {currentPage} of {totalPages}
           </div>
           <div className="flex items-center gap-1">
-            {/* First Page */}
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
@@ -228,7 +218,6 @@ export function DataTable({ columns, rows, rowCount }: Props) {
               <ChevronsLeft className="h-3.5 w-3.5" />
             </button>
 
-            {/* Prev Page */}
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
@@ -238,7 +227,6 @@ export function DataTable({ columns, rows, rowCount }: Props) {
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
 
-            {/* Page number buttons */}
             {pageNumbers.map(page => (
               <button
                 key={page}
@@ -254,7 +242,6 @@ export function DataTable({ columns, rows, rowCount }: Props) {
               </button>
             ))}
 
-            {/* Next Page */}
             <button
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
@@ -264,7 +251,6 @@ export function DataTable({ columns, rows, rowCount }: Props) {
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
 
-            {/* Last Page */}
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}

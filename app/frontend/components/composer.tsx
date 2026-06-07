@@ -6,7 +6,6 @@ import { Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-// Bottom input area. Enter sends, Shift+Enter inserts a newline.
 export function Composer({
   onSend,
   disabled,
@@ -17,7 +16,6 @@ export function Composer({
   const [value, setValue] = React.useState("");
   const ref = React.useRef<HTMLTextAreaElement>(null);
 
-  // Auto-grow the textarea up to a max height.
   const resize = React.useCallback(() => {
     const el = ref.current;
     if (!el) return;

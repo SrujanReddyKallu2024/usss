@@ -17,12 +17,10 @@ export default function ChatPage() {
 
   const bottomRef = React.useRef<HTMLDivElement>(null);
 
-  // Set up the session id once on mount.
   React.useEffect(() => {
     initSession();
   }, [initSession]);
 
-  // Keep the latest message in view as tokens stream in.
   React.useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -31,10 +29,8 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-dvh flex-col bg-background">
-      {/* Gradient accent strip at the very top */}
       <div className="gradient-accent-line shrink-0" />
 
-      {/* Header — glassmorphism */}
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/50 px-4 py-3 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--intent-recommend))] text-white shadow-md">
@@ -48,7 +44,6 @@ export default function ChatPage() {
         <ThemeToggle />
       </header>
 
-      {/* Scrollable message area */}
       <main className="flex-1 overflow-y-auto scroll-smooth">
         <div className="mx-auto w-full max-w-3xl px-4 py-6">
           {empty ? (
@@ -70,7 +65,6 @@ export default function ChatPage() {
         </div>
       </main>
 
-      {/* Composer — glassmorphism */}
       <footer className="glass sticky bottom-0 z-20 border-t border-border/50 px-4 py-3 shadow-[0_-2px_20px_-6px_rgba(0,0,0,0.1)]">
         <div className="mx-auto w-full max-w-3xl">
           <Composer onSend={sendMessage} disabled={sending} />

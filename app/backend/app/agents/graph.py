@@ -1,4 +1,3 @@
-# Orchestrator coordinating routing, memory, intent execution, and logging.
 import time
 
 from app.agents import memory, nl2sql, recommend, router
@@ -27,16 +26,13 @@ def answer(session_id, message):
     }
     total_tokens = 0
     try:
-        # 1. Memory context rewriting
         question, tokens = memory.rewrite(session_id, message)
         total_tokens += tokens
 
-        # 2. Intent routing
         intent, tokens = router.route(question)
         total_tokens += tokens
         res["intent"] = intent
 
-        # 3. Routing dispatch
         if intent == "nl2sql":
             data = nl2sql.generate_and_run(question)
             total_tokens += data["tokens"]

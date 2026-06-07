@@ -1,12 +1,9 @@
-# Database engines and a safe read-only query helper.
 from sqlalchemy import create_engine, text
 
 from app.core.config import settings
 
-# App engine: read/write. Used for schema introspection and writing usage logs.
 app_engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
 
-# Read-only engine: connects as the chatbot_ro user. All generated SQL runs here.
 readonly_engine = create_engine(settings.DATABASE_URL_READONLY, pool_pre_ping=True)
 
 
@@ -17,8 +14,6 @@ def run_readonly_sql(sql, params=None, timeout_ms=5000):
     from slow generated queries.
     """
     with readonly_engine.connect() as conn:
-        # Limit how long any single statement may run.
-        # SET does not accept bind parameters, so inline the integer (we control it).
         conn.execute(text(f"SET LOCAL statement_timeout = {int(timeout_ms)}"))
         result = conn.execute(text(sql), params or {})
         columns = list(result.keys())

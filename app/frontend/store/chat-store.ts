@@ -3,7 +3,6 @@ import { create } from "zustand";
 import { streamChat } from "@/lib/chat-client";
 import type { ChatMessage } from "@/lib/types";
 
-// Create or reuse a stable session id for this browser.
 function getSessionId(): string {
   if (typeof window === "undefined") return "";
   const key = "re-assistant-session-id";
@@ -28,7 +27,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sending: false,
   sessionId: "",
 
-  // Called once on mount to load the session id.
   initSession: () => {
     if (!get().sessionId) {
       set({ sessionId: getSessionId() });
@@ -47,7 +45,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       text: trimmed,
     };
 
-    // The assistant message starts empty and fills in as tokens arrive.
     const assistantId = crypto.randomUUID();
     const assistantMsg: ChatMessage = {
       id: assistantId,
@@ -64,7 +61,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       sessionId,
     }));
 
-    // Helper to update the in-flight assistant message.
     const patch = (changes: Partial<ChatMessage>) =>
       set((s) => ({
         messages: s.messages.map((m) =>
@@ -72,7 +68,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
         ),
       }));
 
-    // Helper to append a streamed token to the existing text.
     const appendToken = (chunk: string) =>
       set((s) => ({
         messages: s.messages.map((m) =>

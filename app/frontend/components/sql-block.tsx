@@ -7,7 +7,6 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import { Button } from "@/components/ui/button";
 
-// Syntax-highlighted SQL with a terminal-style header and copy button.
 export function SqlBlock({
   sql,
   rowCount,
@@ -52,9 +51,7 @@ export function SqlBlock({
         </Button>
       </div>
 
-      {/* Terminal-style code block */}
       <div className="overflow-hidden rounded-lg border border-border/50 shadow-sm">
-        {/* Terminal header with dots */}
         <div className="flex items-center gap-1.5 bg-[#1e1e2e] px-3 py-2 border-b border-white/5">
           <span className="terminal-dot" style={{ background: "#ff5f57" }} />
           <span className="terminal-dot" style={{ background: "#febc2e" }} />

@@ -1,4 +1,3 @@
-# Run all test questions through the agent and print a results table. Run: python eval.py
 import csv
 import os
 import time
@@ -31,7 +30,6 @@ def main():
         try:
             result = graph.answer(f"eval-{i}", q)
             ok = result["status"] == "ok" and bool(result["answer"].strip())
-            # Show row_count for SQL paths, else number of sources.
             if result["row_count"] is not None:
                 info = str(result["row_count"])
             else:
@@ -49,7 +47,7 @@ def main():
             passed += 1
         mark = "ok" if ok else "FAIL"
         print(f"{i:<3} {intent:<10} {info:<9} {ms:<7} {mark:<4} {q[:50]}")
-        time.sleep(8)  # space calls out so the free-tier provider doesn't throttle
+        time.sleep(8)
 
     print("-" * 90)
     print(f"Summary: {passed}/{len(questions)} passed.")

@@ -1,7 +1,5 @@
-# Simple in-memory per-session chat history with follow-up rewriting.
 from app.agents.llm import chat
 
-# session_id -> list of {"role", "content"} turns. Capped per session.
 _history = {}
 MAX_TURNS = 10
 
@@ -27,7 +25,6 @@ def add_turn(session_id, role, content):
     """Append a turn and trim old ones."""
     turns = _history.setdefault(session_id, [])
     turns.append({"role": role, "content": content})
-    # Keep only the most recent turns.
     if len(turns) > MAX_TURNS:
         del turns[:-MAX_TURNS]
 
@@ -42,7 +39,6 @@ def rewrite(session_id, message):
     standalone = message
 
     if history:
-        # Show the model the recent conversation plus the new message.
         convo = "\n".join(f"{t['role']}: {t['content']}" for t in history)
         messages = [
             {"role": "system", "content": REWRITE_SYSTEM},
@@ -54,9 +50,7 @@ def rewrite(session_id, message):
             if text_out and text_out.strip():
                 standalone = text_out.strip()
         except Exception:
-            # If rewrite fails, just use the original message.
             standalone = message
 
-    # Record the user's original message in history.
     add_turn(session_id, "user", message)
     return standalone, tokens

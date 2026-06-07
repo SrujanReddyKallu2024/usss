@@ -1,5 +1,3 @@
-# Upgraded Hybrid RAG Service.
-# Implements semantic and full-text keyword search merged via Reciprocal Rank Fusion (RRF).
 import numpy as np
 from sqlalchemy import text
 
@@ -73,10 +71,8 @@ def retrieve(query, limit=TOP_K, semantic_weight=0.7, keyword_weight=0.3, contex
                     "total_chunks": 1
                 })
     except Exception:
-        # FTS parsing fails on special characters; fall back to semantic search
         pass
 
-    # Reciprocal Rank Fusion (RRF)
     k = 60
     rrf_scores = {}
     docs_by_id = {}
