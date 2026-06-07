@@ -12,7 +12,7 @@ CSV_PATH = os.path.join(
 def _reachable():
     """Return True if we can introspect the DB and reach the LLM."""
     try:
-        from services.schema_introspect import get_schema_string
+        from app.services.schema_introspect import get_schema_string
         schema = get_schema_string()
         return bool(schema)
     except Exception:
@@ -36,26 +36,26 @@ def _load_questions():
 def test_health_logic_imports():
     # Basic import-level sanity: main and graph load.
     import main  # noqa: F401
-    from agent import graph  # noqa: F401
+    from app.agents import graph  # noqa: F401
     assert hasattr(graph, "answer")
 
 
 def test_nl2sql_question():
-    from agent import graph
+    from app.agents import graph
     result = graph.answer("test-nl2sql", "Which tenants have overdue payments?")
     assert result["intent"] in ("nl2sql", "recommend")
     assert result["answer"].strip()
 
 
 def test_rag_question():
-    from agent import graph
+    from app.agents import graph
     result = graph.answer("test-rag", "What is the late payment policy?")
     assert result["intent"] in ("rag", "nl2sql")
     assert result["answer"].strip()
 
 
 def test_recommend_question():
-    from agent import graph
+    from app.agents import graph
     result = graph.answer(
         "test-rec", "Recommend 2 bedroom properties in Austin under 2000")
     assert result["intent"] in ("recommend", "nl2sql")

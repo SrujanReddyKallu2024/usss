@@ -1,37 +1,59 @@
 #!/usr/bin/env bash
-# Bring up a fully local PostgreSQL (no Docker) using the conda 'recli' env,
-# create the database, load the schema + CSVs. Safe to re-run.
-set -e
+# Bring up a local PostgreSQL in Docker, then load the schema + sample CSVs.
+# Requires only Docker (no local Postgres install). Safe to re-run.
+set -euo pipefail
 
-CONDA="/c/Users/sruja/miniconda3/envs/recli/Library/bin"
-PGDATA="/d/c/usssssssss/app/.pgdata"
+# Don't let Git Bash / MSYS rewrite the container-side paths (/csv, /sql, ...).
+export MSYS_NO_PATHCONV=1
+
+CONTAINER=realestate_db
+IMAGE=pgvector/pgvector:pg16
+VOLUME=realestate_pgdata
 PORT=5432
-HERE="/d/c/usssssssss/app/data"
+DB=real_estate
 
-export PATH="$CONDA:$PATH"
-export PGPORT=$PORT
+# Directory of this script (…/app). Use a Windows-style path on Git Bash so the
+# Docker bind mounts resolve correctly; fall back to POSIX pwd elsewhere.
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && { pwd -W 2>/dev/null || pwd; })"
+DATA="$HERE/data"
 
-# 1. Initialise the data directory once (superuser = postgres, trust auth locally).
-if [ ! -f "$PGDATA/PG_VERSION" ]; then
-  echo "initdb..."
-  "$CONDA/initdb.exe" -D "$PGDATA" -U postgres --auth=trust --encoding=UTF8 >/dev/null
+# 1. Start the database container (reuse it if it already exists).
+if [ -n "$(docker ps -q -f name="^${CONTAINER}$")" ]; then
+  echo "Container ${CONTAINER} already running."
+elif [ -n "$(docker ps -aq -f name="^${CONTAINER}$")" ]; then
+  echo "Starting existing container ${CONTAINER}..."
+  docker start "$CONTAINER" >/dev/null
+else
+  echo "Creating container ${CONTAINER} (image ${IMAGE})..."
+  docker run -d --name "$CONTAINER" \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_PASSWORD=postgres \
+    -e POSTGRES_DB="$DB" \
+    -p "${PORT}:5432" \
+    -v "${VOLUME}:/var/lib/postgresql/data" \
+    -v "${DATA}/csv:/csv:ro" \
+    -v "${DATA}/init:/sql:ro" \
+    "$IMAGE" >/dev/null
 fi
 
-# 2. Start the server (if not already running).
-"$CONDA/pg_ctl.exe" -D "$PGDATA" -o "-p $PORT" -l "$PGDATA/server.log" -w start || true
+# 2. Wait until Postgres is accepting connections.
+echo -n "Waiting for Postgres"
+until docker exec "$CONTAINER" pg_isready -U postgres -d "$DB" >/dev/null 2>&1; do
+  echo -n "."
+  sleep 1
+done
+echo " ready."
 
-# 3. Create the database (ignore error if it already exists).
-"$CONDA/createdb.exe" -U postgres -p $PORT real_estate 2>/dev/null || echo "database already exists"
+# 3. Apply schema (tables + read-only chatbot_ro role) and load the CSVs.
+#    Both scripts are idempotent — 01_schema.sql drops everything first.
+docker exec "$CONTAINER" psql -v ON_ERROR_STOP=1 -U postgres -d "$DB" -f /sql/01_schema.sql
+docker exec "$CONTAINER" psql -v ON_ERROR_STOP=1 -U postgres -d "$DB" -f /sql/02_load.sql
 
-# 4. Schema (tables + read-only role) and data load.
-"$CONDA/psql.exe" -U postgres -p $PORT -d real_estate -f "$HERE/init/01_schema.sql" || true
-"$CONDA/psql.exe" -U postgres -p $PORT -d real_estate -f "$HERE/load_local.sql"
-
-# 5. Quick row-count check.
-"$CONDA/psql.exe" -U postgres -p $PORT -d real_estate -c \
-  "SELECT 'properties' t, count(*) FROM properties UNION ALL
-   SELECT 'tenants', count(*) FROM tenants UNION ALL
+# 4. Quick row-count sanity check.
+docker exec "$CONTAINER" psql -U postgres -d "$DB" -c \
+  "SELECT 'properties' AS t, count(*) FROM properties UNION ALL
+   SELECT 'tenants',  count(*) FROM tenants  UNION ALL
    SELECT 'payments', count(*) FROM payments UNION ALL
-   SELECT 'kb_docs', count(*) FROM knowledge_base_documents;"
+   SELECT 'kb_docs',  count(*) FROM knowledge_base_documents;"
 
-echo "Local DB is up on port $PORT."
+echo "Local DB is up on port ${PORT} (container: ${CONTAINER})."
